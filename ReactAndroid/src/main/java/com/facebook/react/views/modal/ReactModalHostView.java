@@ -127,7 +127,7 @@ public class ReactModalHostView extends ViewGroup implements LifecycleEventListe
   }
 
   private void dismiss() {
-    if (mDialog != null) {
+    if (mDialog != null && mDialog.getOwnerActivity() != null && !mDialog.getOwnerActivity().isFinishing()) {
       mDialog.dismiss();
       mDialog = null;
 
@@ -201,6 +201,12 @@ public class ReactModalHostView extends ViewGroup implements LifecycleEventListe
       }
     }
 
+    Activity currentActivity = ((ReactContext) getContext()).getCurrentActivity();
+
+    if (currentActivity == null || currentActivity.isFinishing()) {
+      return;
+    }
+
     // Reset the flag since we are going to create a new dialog
     mPropertyRequiresNewDialog = false;
     int theme = R.style.Theme_FullScreenDialog;
@@ -247,7 +253,10 @@ public class ReactModalHostView extends ViewGroup implements LifecycleEventListe
     if (mHardwareAccelerated) {
       mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
     }
-    mDialog.show();
+
+    if (mDialog.getOwnerActivity() != null && !mDialog.getOwnerActivity().isFinishing()) {
+      mDialog.show();
+    }
   }
 
   /**
