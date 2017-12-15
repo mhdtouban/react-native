@@ -127,7 +127,9 @@ public class ReactModalHostView extends ViewGroup implements LifecycleEventListe
   }
 
   private void dismiss() {
-    if (mDialog != null && mDialog.getOwnerActivity() != null && !mDialog.getOwnerActivity().isFinishing()) {
+    Activity currentActivity = ((ReactContext) getContext()).getCurrentActivity();
+
+    if (mDialog != null && currentActivity != null && !currentActivity.isFinishing()) {
       mDialog.dismiss();
       mDialog = null;
 
@@ -254,9 +256,7 @@ public class ReactModalHostView extends ViewGroup implements LifecycleEventListe
       mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
     }
 
-    if (mDialog.getOwnerActivity() != null && !mDialog.getOwnerActivity().isFinishing()) {
-      mDialog.show();
-    }
+    mDialog.show();
   }
 
   /**
